@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Accessible student enrollment registration form for De La Salle John Bosco College">
+  <title>Student Enrollment Registration · DLSJBC</title>
+  
+  <!-- Google Fonts: Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+  <svg class="sprite" aria-hidden="true" focusable="false"><defs>
+<symbol id="i-arrow-left" viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></symbol>
+<symbol id="i-arrow-right" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></symbol>
+<symbol id="i-check" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></symbol>
+<symbol id="i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></symbol>
+<symbol id="i-alert" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></symbol>
+<symbol id="i-refresh" viewBox="0 0 24 24"><path d="M3 12a9 9 0 0 1 15.5-6.2L21 8M21 3v5h-5M21 12a9 9 0 0 1-15.5 6.2L3 16M3 21v-5h5"/></symbol>
+<symbol id="i-external" viewBox="0 0 24 24"><path d="M15 3h6v6M10 14 21 3M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></symbol>
+<symbol id="i-chevron" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></symbol>
+<symbol id="i-save" viewBox="0 0 24 24"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2zM17 21v-8H7v8M7 3v5h8"/></symbol>
+</defs></svg>
+
+  <header class="site-header">
+    <div class="header-container">
+      <div class="brand">
+        <img src="Assets/dlsjbc-logo.jpg" alt="De La Salle John Bosco College Logo" class="school-logo">
+        <div>
+          <p class="school-name">De La Salle John Bosco College</p>
+          <p class="school-subtitle">Student Enrollment System</p>
+        </div>
+      </div>
+
+      <div class="header-help">
+        <span>Need help?</span>
+        <button type="button" class="link-btn" id="openGuideBtn">Enrollment Guide</button>
+      </div>
+    </div>
+  </header>
+
+  <div id="globalNotification" class="global-notification" role="status" aria-live="polite" aria-atomic="true"></div>
+
+  <main id="mainContent" class="page-container">
+    <noscript><div class="warning-message"><span class="message-icon"><svg class="icon" aria-hidden="true" focusable="false"><use href="#i-alert"/></svg></span><p>JavaScript is required to complete this enrollment form. Please enable it in your browser settings.</p></div></noscript>
+    <section class="intro">
+      <div>
+        <p class="eyebrow">ONLINE ENROLLMENT</p>
+        <h1>Student Registration</h1>
+        <p class="intro-text">
+          Complete the steps below to submit your enrollment.
+          Fields marked with <span class="required-symbol">*</span> are required.
+        </p>
+        <p class="shortcut-hint">Tips: press <kbd>Enter</kbd> to continue, <kbd>Ctrl</kbd>+<kbd>S</kbd> to save a draft.</p>
+      </div>
+
+      <div class="intro-actions">
+        <span class="save-status" role="status" id="autoSaveIndicator"><svg class="icon" aria-hidden="true" focusable="false"><use href="#i-check"/></svg><span>Progress saves automatically</span></span>
+        <button type="button" id="saveExitBtn" class="btn btn-secondary">
+        Save as Draft
+      </button>
+      </div>
+    </section>
+
+    <!-- Progress -->
+    <section class="progress-section" aria-label="Enrollment progress">
+      <div class="progress-header">
+        <span id="progressText">Step 1 of 5</span>
+        <span id="progressPercent">0% complete</span>
+      </div>
+
+      <div class="progress-bar" role="progressbar" aria-valuemin="1" aria-valuemax="5" aria-valuenow="1" aria-label="Enrollment progress">
+        <div id="progressFill" class="progress-fill"></div>
+      </div>
+
+      <ol class="stepper" id="stepperNav">
+        <li class="step active" data-step="1">
+          <span class="step-circle">1</span>
+          <span class="step-label">Personal</span>
+        </li>
+        <li class="step" data-step="2">
+          <span class="step-circle">2</span>
+          <span class="step-label">Contact</span>
+        </li>
+        <li class="step" data-step="3">
+          <span class="step-circle">3</span>
+          <span class="step-label">Academic</span>
+        </li>
+        <li class="step" data-step="4">
+          <span class="step-circle">4</span>
+          <span class="step-label">Review</span>
+        </li>
+        <li class="step" data-step="5">
+          <span class="step-circle">5</span>
+          <span class="step-label">Complete</span>
+        </li>
+      </ol>
+    </section>
+
+          <section class="form-card">
+        <form id="enrollmentForm" novalidate>
+          <!-- =========================
+               STEP 1
+          ========================== -->
+          <div class="form-step active" data-form-step="1">
+            <div class="section-heading">
+              <span class="section-number">1</span>
+              <div>
+                <h2>Personal Information</h2>
+                <p>Enter your information exactly as it appears on your official school documents.</p>
+              </div>
+            </div>
+
+            <div class="info-message">
+              <span class="message-icon"><svg class="icon" aria-hidden="true" focusable="false"><use href="#i-info"/></svg></span>
+              <p>Please double-check your name and birth date. These details may appear on official school records.</p>
+            </div>
+
+            <div class="form-grid">
+              <div class="form-group">
+                <label for="studentId">
+                  Student ID <span class="optional">(Optional)</span>
+                </label>
+                <input
+                  type="text"
+                  id="studentId"
+                  name="studentId"
+                  autocomplete="off"
+                  placeholder="e.g. 2500001"
+                  maxlength="7"
+                  inputmode="numeric"
+                >
+                <p class="helper-text">Format: 7 digits (e.g., 2500001). Leave blank if you are a new student.</p>
+                <p class="error-message" aria-live="polite" id="studentIdError"></p>
+              </div>
+
+              <div class="form-group">
+                <label for="firstName">First Name <span class="required-symbol" aria-hidden="true">*</span></label>
+                <input type="text" id="firstName" name="firstName" autocomplete="given-name" placeholder="e.g. Juan" maxlength="50" required>
+                <p class="error-message" aria-live="polite" id="firstNameError"></p>
+              </div>
+
+              <div class="form-group">
+                <label for="middleName">Middle Name <span class="optional">(Optional)</span></label>
+                <input type="text" id="middleName" name="middleName" autocomplete="additional-name" placeholder="e.g. Santos" maxlength="50">
+                <p class="error-message" aria-live="polite" id="middleNameError"></p>
+              </div>
+
+              <div class="form-group">
+                <label for="lastName">Last Name <span class="required-symbol" aria-hidden="true">*</span></label>
+                <input type="text" id="lastName" name="lastName" autocomplete="family-name" placeholder="e.g. Dela Cruz" maxlength="50" required>
+                <p class="error-message" aria-live="polite" id="lastNameError"></p>
+              </div>
+
+              <div class="form-group">
+                <label for="suffix">Suffix <span class="optional">(Optional)</span></label>
+                <select id="suffix" name="suffix">
+                  <option value="">None</option>
+                  <option value="Jr.">Jr.</option>
+                  <option value="Sr.">Sr.</option>
+                  <option value="II">II</option>
+                  <option value="III">III</option>
+                  <option value="IV">IV</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label for="birthDate">Date of Birth <span class="required-symbol" aria-hidden="true">*</span></label>
+                <div class="date-input-wrapper">
+                  <!-- Default value sets the visible mask -->
+                  <input type="text" id="birthDate" name="birthDate" class="date-input" autocomplete="off" inputmode="numeric" maxlength="10" placeholder="MM/DD/YYYY" required>
+                  <button type="button" class="calendar-trigger-btn" id="calTriggerBtn" aria-label="Open calendar to choose date of birth" aria-haspopup="dialog" aria-expanded="false">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                      <line x1="16" y1="2" x2="16" y2="6"></line>
+                      <line x1="8" y1="2" x2="8" y2="6"></line>
+                      <line x1="3" y1="10" x2="21" y2="10"></line>
+                    </svg>
+                  </button>
+                </div>
+                <p class="error-message" aria-live="polite" id="birthDateError"></p>
+              </div>
+
+              <!-- Sex Field (Dropdown) -->
+              <div class="form-group">
+                <label for="sex">Sex <span class="required-symbol" aria-hidden="true">*</span></label>
+                <select id="sex" name="sex" required>
+                  <option value="">Select sex</option>
+                  <option value="Male">Male</option>
+                  <option value="Female">Female</option>
+                </select>
+                <p class="error-message" aria-live="polite" id="sexError"></p>
+              </div>
+
+              <!-- Religion Field -->
+              <div class="form-group">
+                <label for="religion">Religion <span class="required-symbol" aria-hidden="true">*</span></label>
+                <input type="text" id="religion" name="religion" placeholder="e.g. Roman Catholic" maxlength="50" required>
+                <p class="error-message" aria-live="polite" id="religionError"></p>
+              </div>
+
+              <!-- Civil Status -->
+              <div class="form-group">
+                <label for="civilStatus">Civil Status <span class="required-symbol" aria-hidden="true">*</span></label>
+                <select id="civilStatus" name="civilStatus" required>
+                  <option value="">Select civil status</option>
+                  <option value="Single">Single</option>
+                  <option value="Married">Married</option>
+                  <option value="Widowed">Widowed</option>
+                  <option value="Separated">Separated</option>
+                </select>
+                <p class="error-message" aria-live="polite" id="civilStatusError"></p>
+              </div>
+            </div>
+
+            <div class="form-actions first-step-actions">
+              <button type="button" class="btn btn-primary next-btn">
+                Continue to Contact <svg class="icon" aria-hidden="true" focusable="false"><use href="#i-arrow-right"/></svg>
+              </button>
+            </div>
+          </div>
+
+          <!-- =========================
+               STEP 2
+          ========================== -->
+          <div class="form-step" data-form-step="2">
+            <div class="section-heading">
+              <span class="section-number">2</span>
+              <div>
+                <h2>Contact & Address</h2>
+                <p>Provide your current contact information so the school can reach you when necessary.</p>
+              </div>
+            </div>
+
+            <div class="form-grid">
+              <div class="form-group">
+                <label for="email">Email Address <span class="required-symbol" aria-hidden="true">*</span></label>
+                <input type="email" id="email" name="email" autocomplete="email" placeholder="e.g. student@email.com" maxlength="100" required>
+                <p class="helper-text">Use an email address that you regularly check.</p>
+                <p class="error-message" aria-live="polite" id="emailError"></p>
+              </div>
+
+              <div class="form-group">
+                <label for="mobile">Mobile Number <span class="required-symbol" aria-hidden="true">*</span></label>
+                <div class="phone-input">
+                  <span class="phone-prefix">+63</span>
+                  <input type="tel" id="mobile" name="mobile" inputmode="numeric" autocomplete="tel-national" placeholder="912 345 6789" maxlength="12" required>
+                </div>
+                <p class="helper-text">Enter a Philippine mobile number beginning with 9.</p>
+                <p class="error-message" aria-live="polite" id="mobileError"></p>
+              </div>
+
+              </div>
+
+            <hr class="section-divider">
+            <div class="subsection-heading">
+              <h3>Home Address</h3>
+              <p>Choose your region first; each list narrows to match your previous choice.</p>
+            </div>
+
+            <div class="form-grid">
+              <!-- Region -->
+              <div class="form-group combobox-wrapper">
+                <label for="region">Region <span class="required-symbol" aria-hidden="true">*</span></label>
+                <div class="combobox-container">
+                  <input type="text" id="region" name="region" placeholder="Type or select Region" autocomplete="off" required>
+                  <span class="combobox-caret"><svg class="icon" aria-hidden="true" focusable="false"><use href="#i-chevron"/></svg></span>
+                  <button type="button" class="combobox-clear" data-target="region" aria-label="Clear Region" hidden>
+                    <svg class="icon" viewBox="0 0 24 24" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+                  </button>
+                  <ul class="combobox-list" id="regionList" role="listbox"></ul>
+                </div>
+                <p class="error-message" aria-live="polite" id="regionError"></p>
+              </div>
+
+              <!-- Province -->
+              <div class="form-group combobox-wrapper">
+                <label for="province">Province <span class="required-symbol" aria-hidden="true">*</span></label>
+                <div class="combobox-container">
+                  <input type="text" id="province" name="province" placeholder="Type or select Province" autocomplete="off" required disabled>
+                  <span class="combobox-caret"><svg class="icon" aria-hidden="true" focusable="false"><use href="#i-chevron"/></svg></span>
+                  <button type="button" class="combobox-clear" data-target="province" aria-label="Clear Province" hidden>
+                    <svg class="icon" viewBox="0 0 24 24" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+                  </button>
+                  <ul class="combobox-list" id="provinceList" role="listbox"></ul>
+                </div>
+                <p class="error-message" aria-live="polite" id="provinceError"></p>
+              </div>
+
+              <!-- City -->
+              <div class="form-group combobox-wrapper">
+                <label for="city">City / Municipality <span class="required-symbol" aria-hidden="true">*</span></label>
+                <div class="combobox-container">
+                  <input type="text" id="city" name="city" placeholder="Type or select City/Municipality" autocomplete="off" required disabled>
+                  <span class="combobox-caret"><svg class="icon" aria-hidden="true" focusable="false"><use href="#i-chevron"/></svg></span>
+                  <button type="button" class="combobox-clear" data-target="city" aria-label="Clear City" hidden>
+                    <svg class="icon" viewBox="0 0 24 24" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+                  </button>
+                  <ul class="combobox-list" id="cityList" role="listbox"></ul>
+                </div>
+                <p class="error-message" aria-live="polite" id="cityError"></p>
+              </div>
+
+              <!-- Barangay -->
+              <div class="form-group combobox-wrapper">
+                <label for="barangay">Barangay <span class="required-symbol" aria-hidden="true">*</span></label>
+                <div class="combobox-container">
+                  <input type="text" id="barangay" name="barangay" placeholder="Type or select Barangay" autocomplete="off" required disabled>
+                  <span class="combobox-caret"><svg class="icon" aria-hidden="true" focusable="false"><use href="#i-chevron"/></svg></span>
+                  <button type="button" class="combobox-clear" data-target="barangay" aria-label="Clear Barangay" hidden>
+                    <svg class="icon" viewBox="0 0 24 24" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+                  </button>
+                  <ul class="combobox-list" id="barangayList" role="listbox"></ul>
+                </div>
+                <p class="error-message" aria-live="polite" id="barangayError"></p>
+              </div>
+
+              <div class="form-group">
+                <label for="street">Street / Purok / House No. <span class="optional">(Optional)</span></label>
+                <input type="text" id="street" name="street" autocomplete="street-address" placeholder="Enter street or purok" maxlength="100">
+              </div>
+
+              <div class="form-group">
+                <label for="zipCode">ZIP Code <span class="required-symbol" aria-hidden="true">*</span></label>
+                <input type="text" id="zipCode" name="zipCode" inputmode="numeric" autocomplete="postal-code" placeholder="e.g. 8311" maxlength="4" required>
+                <p class="error-message" aria-live="polite" id="zipCodeError"></p>
+              </div>
+            </div>
+
+            <hr class="section-divider">
+
+            <div class="subsection-heading">
+              <h3>Emergency Contact</h3>
+              <p>Provide someone the school can contact in case of an emergency.</p>
+            </div>
+
+            <div class="form-grid">
+              <div class="form-group">
+                <label for="emergencyName">Full Name <span class="required-symbol" aria-hidden="true">*</span></label>
+                <input type="text" id="emergencyName" name="emergencyName" placeholder="Emergency contact's full name" maxlength="100" required>
+                <p class="error-message" aria-live="polite" id="emergencyNameError"></p>
+              </div>
+
+              <div class="form-group">
+                <label for="relationship">Relationship <span class="required-symbol" aria-hidden="true">*</span></label>
+                <select id="relationship" name="relationship" required>
+                  <option value="">Select relationship</option>
+                  <option value="Parent">Parent</option>
+                  <option value="Guardian">Guardian</option>
+                  <option value="Sibling">Sibling</option>
+                  <option value="Spouse">Spouse</option>
+                  <option value="Relative">Relative</option>
+                  <option value="Other">Other</option>
+                </select>
+                <p class="error-message" aria-live="polite" id="relationshipError"></p>
+              </div>
+
+              <div class="form-group">
+                <label for="emergencyMobile">Mobile Number <span class="required-symbol" aria-hidden="true">*</span></label>
+                <div class="phone-input">
+                  <span class="phone-prefix">+63</span>
+                  <input type="tel" id="emergencyMobile" name="emergencyMobile" inputmode="numeric" placeholder="912 345 6789" maxlength="12" required>
+                </div>
+                <p class="helper-text">Enter a Philippine mobile number beginning with 9.</p>
+                <p class="error-message" aria-live="polite" id="emergencyMobileError"></p>
+              </div>
+            </div>
+
+            <div class="form-actions">
+              <button type="button" class="btn btn-secondary prev-btn">
+                <svg class="icon" aria-hidden="true" focusable="false"><use href="#i-arrow-left"/></svg> Back to Personal
+              </button>
+              <button type="button" class="btn btn-primary next-btn">
+                Continue to Academic <svg class="icon" aria-hidden="true" focusable="false"><use href="#i-arrow-right"/></svg>
+              </button>
+            </div>
+          </div>
+
+          <!-- =========================
+               STEP 3
+          ========================== -->
+          <div class="form-step" data-form-step="3">
+            <div class="section-heading">
+              <span class="section-number">3</span>
+              <div>
+                <h2>Academic Information</h2>
+                <p>Select the academic information that applies to your enrollment.</p>
+              </div>
+            </div>
+
+            <div class="info-message">
+              <span class="message-icon"><svg class="icon" aria-hidden="true" focusable="false"><use href="#i-info"/></svg></span>
+              <p>Available programs will automatically update based on the department you select.</p>
+            </div>
+
+            <div class="form-grid">
+              <div class="form-group">
+                <label for="studentType">
+                  Student Type <span class="required-symbol" aria-hidden="true">*</span>
+                </label>
+                <select id="studentType" name="studentType" required>
+                  <option value="">Select student type</option>
+                  <option value="New Student">New Student</option>
+                  <option value="Continuing Student">Continuing Student</option>
+                  <option value="Transferee">Transferee</option>
+                  <option value="Returning Student">Returning Student</option>
+                </select>
+                <p class="helper-text">Choose “New Student” for a first enrollment, or “Transferee” if you are coming from another school.</p>
+                <p class="error-message" aria-live="polite" id="studentTypeError"></p>
+              </div>
+
+              <div class="form-group">
+                <label for="academicYear">Academic Year <span class="required-symbol" aria-hidden="true">*</span></label>
+                <select id="academicYear" name="academicYear" required>
+                  <option value="">Select academic year</option>
+                  <option value="2026-2027">2026–2027</option>
+                  <option value="2027-2028">2027–2028</option>
+                </select>
+                <p class="error-message" aria-live="polite" id="academicYearError"></p>
+              </div>
+
+              <div class="form-group">
+                <label for="semester">Term / Trimester <span class="required-symbol" aria-hidden="true">*</span></label>
+                <select id="semester" name="semester" required>
+                  <option value="">Select trimester</option>
+                  <option value="1st Trimester">1st Trimester</option>
+                  <option value="2nd Trimester">2nd Trimester</option>
+                  <option value="3rd Trimester">3rd Trimester</option>
+                </select>
+                <p class="error-message" aria-live="polite" id="semesterError"></p>
+              </div>
+
+              <div class="form-group">
+                <label for="yearLevel">Year Level <span class="required-symbol" aria-hidden="true">*</span></label>
+                <select id="yearLevel" name="yearLevel" required>
+                  <option value="">Select year level</option>
+                  <option value="First Year">First Year</option>
+                  <option value="Second Year">Second Year</option>
+                  <option value="Third Year">Third Year</option>
+                  <option value="Fourth Year">Fourth Year</option>
+                </select>
+                <p class="error-message" aria-live="polite" id="yearLevelError"></p>
+              </div>
+            <div class="form-group full-width">
+                <label for="department">College / Department <span class="required-symbol" aria-hidden="true">*</span></label>
+                <select id="department" name="department" required>
+                  <option value="">Select department</option>
+                  <option value="College of Computer Studies">College of Computer Studies</option>
+                  <option value="College of Business and Accountancy">College of Business and Accountancy</option>
+                  <option value="College of Hospitality and Tourism Management">College of Hospitality and Tourism Management</option>
+                  <option value="College of Teacher Education">College of Teacher Education</option>
+                  <option value="Manpower Skills Training Program">Manpower Skills Training Program</option>
+                  <option value="TVET Programs and TESDA Diploma Programs">TVET Programs and TESDA Diploma Programs</option>
+                </select>
+                <p class="error-message" aria-live="polite" id="departmentError"></p>
+              </div>
+
+              <div class="form-group full-width">
+                <label for="program">Program <span class="required-symbol" aria-hidden="true">*</span></label>
+                <select id="program" name="program" required disabled>
+                  <option value="">Select a department first</option>
+                </select>
+                <p class="helper-text" id="programHelper">Programs are filtered to prevent invalid selections.</p>
+                <p class="error-message" aria-live="polite" id="programError"></p>
+              </div>
+
+              </div>
+
+            <div class="form-actions">
+              <button type="button" class="btn btn-secondary prev-btn">
+                <svg class="icon" aria-hidden="true" focusable="false"><use href="#i-arrow-left"/></svg> Back to Contact
+              </button>
+              <button type="button" class="btn btn-primary next-btn">
+                Review Enrollment <svg class="icon" aria-hidden="true" focusable="false"><use href="#i-arrow-right"/></svg>
+              </button>
+            </div>
+          </div>
+
+          <!-- =========================
+               STEP 4
+          ========================== -->
+          <div class="form-step" data-form-step="4">
+            <div class="section-heading">
+              <span class="section-number">4</span>
+              <div>
+                <h2>Review & Confirm</h2>
+                <p>Review your information carefully before submitting your enrollment.</p>
+              </div>
+            </div>
+
+            <div class="warning-message">
+              <span class="message-icon"><svg class="icon" aria-hidden="true" focusable="false"><use href="#i-alert"/></svg></span>
+              <p>Make sure your information is correct. Use the <strong>Edit</strong> buttons below if you need to make changes.</p>
+            </div>
+
+            <div class="review-section">
+              <div class="review-header">
+                <div><p class="review-kicker">STEP 1</p><h3>Personal Information</h3></div>
+                <button type="button" class="edit-btn" data-edit-step="1" aria-label="Edit Personal Information">Edit</button>
+              </div>
+              <dl id="personalReview" class="review-grid"></dl>
+            </div>
+
+            <div class="review-section">
+              <div class="review-header">
+                <div><p class="review-kicker">STEP 2</p><h3>Contact & Address</h3></div>
+                <button type="button" class="edit-btn" data-edit-step="2" aria-label="Edit Contact and Address">Edit</button>
+              </div>
+              <dl id="contactReview" class="review-grid"></dl>
+            </div>
+
+            <div class="review-section">
+              <div class="review-header">
+                <div><p class="review-kicker">STEP 3</p><h3>Academic Information</h3></div>
+                <button type="button" class="edit-btn" data-edit-step="3" aria-label="Edit Academic Information">Edit</button>
+              </div>
+              <dl id="academicReview" class="review-grid"></dl>
+            </div>
+
+            <div class="confirmation-box">
+              <label class="checkbox-label">
+                <input type="checkbox" id="confirmationCheck">
+                <span>
+                  <strong>I confirm that I have reviewed my information.</strong>
+                  <small>I certify that the information I provided is complete and correct to the best of my knowledge.</small>
+                </span>
+              </label>
+              <p class="privacy-note">Your information is handled in line with applicable Data Privacy laws and institutional policies.</p>
+            </div>
+
+            <p id="confirmationError" class="error-message confirmation-error" aria-live="polite"></p>
+
+            <div class="form-actions">
+              <button type="button" class="btn btn-secondary prev-btn">
+                <svg class="icon" aria-hidden="true" focusable="false"><use href="#i-arrow-left"/></svg> Back to Academic
+              </button>
+              <button type="submit" id="submitBtn" class="btn btn-success" aria-describedby="submitNote" disabled>
+                <span class="button-text">Submit Enrollment</span>
+                <span class="button-loader" aria-hidden="true"></span>
+              </button>
+            </div>
+            <p class="submit-note" id="submitNote">Tick the confirmation box to enable submission. Nothing is sent until you select <strong>Submit Enrollment</strong>.</p>
+          </div>
+
+          <!-- =========================
+               STEP 5
+          ========================== -->
+          <div class="form-step" data-form-step="5">
+            <div class="success-state">
+              <div class="success-icon" aria-hidden="true"><svg class="icon" aria-hidden="true" focusable="false"><use href="#i-check"/></svg></div>
+              <p class="success-kicker">ENROLLMENT RECEIVED</p>
+              <h2>Enrollment Submitted Successfully</h2>
+              <p class="success-description">Your enrollment registration has been received. Keep the reference number below for future inquiries.</p>
+
+              <div class="reference-card">
+                <span>Enrollment Reference Number</span>
+                <strong id="referenceNumber">ENR-2026-000000</strong>
+                <button type="button" id="copyReferenceBtn" class="copy-btn">Copy reference number</button>
+              </div>
+
+              <div class="success-details">
+                <div><span>Student</span><strong id="successStudentName">—</strong></div>
+                <div><span>Program</span><strong id="successProgram">—</strong></div>
+                <div><span>Academic Period</span><strong id="successAcademicPeriod">—</strong></div>
+              </div>
+
+              <div class="next-steps">
+                <h3>What happens next?</h3>
+                <ol>
+                  <li>Your registration will be reviewed by the Registrar's Office.</li>
+                  <li>Check your email for enrollment updates and additional requirements.</li>
+                  <li>Keep your reference number for future inquiries.</li>
+                </ol>
+              </div>
+
+              <div class="success-actions">
+                <button type="button" id="printBtn" class="btn btn-secondary">Print Confirmation</button>
+                <button type="button" id="newEnrollmentBtn" class="btn btn-primary">Start New Enrollment</button>
+              </div>
+            </div>
+          </div>
+        </form>
+      </section>
+  </main>
+
+
+  <!-- Enrollment Guide Modal -->
+  <div id="guideModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="guideTitle" aria-hidden="true">
+    <div class="modal-overlay" data-close-modal="guideModal"></div>
+    <div class="modal-content modal-wide" role="document">
+      <h2 id="guideTitle">Enrollment Guide</h2>
+      <div class="faq">
+        <details open><summary>What do I need before I start?</summary><p>Your personal details as written on school records, a mobile number and email you check, your home address, an emergency contact, and your intended program and year level.</p></details>
+        <details><summary>Will I lose my progress?</summary><p>No. Your entries save automatically in this browser, and you can use <strong>Save as Draft</strong> at any time. Drafts live on this device only, so use the same browser to continue, and avoid clearing site data.</p></details>
+        <details><summary>What is a Student ID?</summary><p>A 7-digit number such as 2500001. Leave it blank if you are a new student.</p></details>
+        <details><summary>The address list will not load or my barangay is missing</summary><p>Check your internet connection and refresh the page. If your barangay is still missing, contact the Registrar’s Office through the school website.</p></details>
+        <details><summary>How is my data handled?</summary><p>Personal data submitted through this portal is handled in line with applicable Data Privacy laws and institutional policies. Drafts are stored in this browser only.</p></details>
+        <details><summary>What happens after I submit?</summary><p>The Registrar’s Office reviews your registration. Check your email for updates, and keep your reference number for inquiries.</p></details>
+        <details><summary>Keyboard shortcuts</summary><p><kbd>Enter</kbd> continues to the next step. <kbd>Ctrl</kbd>+<kbd>S</kbd> (or <kbd>⌘</kbd>+<kbd>S</kbd>) saves a draft. <kbd>Esc</kbd> closes dialogs and the calendar.</p></details>
+      </div>
+      <p class="guide-contact">Need to talk to a person? Registrar contact details are on <a href="https://dlsjbc.edu.ph" target="_blank" rel="noopener noreferrer">dlsjbc.edu.ph <svg class="icon" aria-hidden="true" focusable="false"><use href="#i-external"/></svg></a>.</p>
+      <div class="modal-actions"><button type="button" class="btn btn-primary" data-close-modal="guideModal">Close</button></div>
+    </div>
+  </div>
+
+  <!-- Restore Draft Modal -->
+  <div id="restoreModal" class="modal" data-persistent="true" role="dialog" aria-modal="true" aria-labelledby="restoreTitle" aria-hidden="true">
+    <div class="modal-overlay"></div>
+    <div class="modal-content" role="document">
+      <div class="modal-icon info-modal-icon" aria-hidden="true"><svg class="icon" aria-hidden="true" focusable="false"><use href="#i-refresh"/></svg></div>
+      <h2 id="restoreTitle">Continue your enrollment?</h2>
+      <p>We found information from an unfinished enrollment form. Would you like to continue where you left off?</p>
+      <p class="draft-meta" id="draftMeta"></p>
+      <div class="modal-actions">
+        <button type="button" id="discardDraftBtn" class="btn btn-secondary">Start Over</button>
+        <button type="button" id="restoreDraftBtn" class="btn btn-primary">Continue Enrollment</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Clear Confirmation Modal -->
+  <div id="clearModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="clearTitle" aria-hidden="true">
+    <div class="modal-overlay" data-close-modal="clearModal"></div>
+    <div class="modal-content" role="document">
+      <div class="modal-icon warning-modal-icon" aria-hidden="true"><svg class="icon" aria-hidden="true" focusable="false"><use href="#i-alert"/></svg></div>
+      <h2 id="clearTitle">Start a new enrollment?</h2>
+      <p>The information currently entered in this form will be cleared from this browser.</p>
+      <div class="modal-actions">
+        <button type="button" class="btn btn-secondary" data-close-modal="clearModal">Cancel</button>
+        <button type="button" id="confirmClearBtn" class="btn btn-danger">Clear & Start Over</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Custom Calendar Modal -->
+  <div id="customCalendar" class="calendar-popup" role="dialog" aria-label="Choose date of birth" aria-hidden="true">
+    <div class="calendar-header">
+      <button type="button" class="cal-nav-btn" id="calPrevMonth" aria-label="Previous month"><svg class="icon" aria-hidden="true" focusable="false"><use href="#i-arrow-left"/></svg></button>
+      
+      <div class="cal-selectors">
+        <select id="calMonthSelect" class="cal-select" aria-label="Month"></select>
+        <select id="calYearSelect" class="cal-select" aria-label="Year"></select>
+      </div>
+
+      <button type="button" class="cal-nav-btn" id="calNextMonth" aria-label="Next month"><svg class="icon" aria-hidden="true" focusable="false"><use href="#i-arrow-right"/></svg></button>
+    </div>
+    <div class="calendar-grid" id="calDaysContainer">
+      <!-- Days injected by JS -->
+    </div>
+  </div>
+
+   <footer class="site-footer">
+    <div class="header-container">
+      <p>&copy; 2026 <strong>De La Salle John Bosco College</strong>. All Rights Reserved.</p>
+    </div>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
