@@ -42,6 +42,7 @@ const clearModal = document.getElementById("clearModal");
 const restoreDraftBtn = document.getElementById("restoreDraftBtn");
 const discardDraftBtn = document.getElementById("discardDraftBtn");
 const confirmClearBtn = document.getElementById("confirmClearBtn");
+const cancelClearBtn = document.getElementById("cancelClearBtn"); 
 
 const newEnrollmentBtn = document.getElementById("newEnrollmentBtn");
 const copyReferenceBtn = document.getElementById("copyReferenceBtn");
@@ -289,7 +290,6 @@ function attachEventListeners() {
   departmentSelect.addEventListener("change", handleDepartmentChange);
   confirmationCheck.addEventListener("change", handleConfirmationChange);
   
-  // Allow Enter key to toggle the confirmation checkbox
   confirmationCheck.addEventListener("keydown", (e) => {
     if (e.key === "Enter") {
       e.preventDefault(); 
@@ -308,12 +308,27 @@ function attachEventListeners() {
   restoreDraftBtn.addEventListener("click", restoreSavedDraft);
   document.getElementById("openGuideBtn").addEventListener("click", () => openModal(guideModal));
 
-  discardDraftBtn.addEventListener("click", () => {
+  discardDraftBtn.addEventListener("click", (e) => {
+    e.preventDefault();
     closeModal(restoreModal);
     openModal(clearModal);
   });
 
   confirmClearBtn.addEventListener("click", clearAndResetForm);
+
+  // Cancel button returns to the Restore Modal if a draft was found
+  if (cancelClearBtn) {
+    cancelClearBtn.addEventListener("click", (e) => {
+      e.preventDefault();    
+      e.stopPropagation();   
+      closeModal(clearModal);
+      
+      // If there was a saved draft, re-open the "Continue?" prompt
+      if (draftDecisionPending) {
+        openModal(restoreModal);
+      }
+    });
+  }
 
   newEnrollmentBtn.addEventListener("click", () => {
     openModal(clearModal);
@@ -323,10 +338,19 @@ function attachEventListeners() {
   printBtn.addEventListener("click", () => window.print());
 
   document.querySelectorAll("[data-close-modal]").forEach((element) => {
-    element.addEventListener("click", () => {
+    element.addEventListener("click", (e) => {
+      e.preventDefault(); 
+      e.stopPropagation();
       const modalId = element.dataset.closeModal;
       const modal = document.getElementById(modalId);
-      closeModal(modal);
+      
+      // If the overlay for clearModal is clicked, behave like Cancel
+      if (modalId === "clearModal" && draftDecisionPending) {
+         closeModal(clearModal);
+         openModal(restoreModal);
+      } else {
+         closeModal(modal);
+      }
     });
   });
 
@@ -1089,50 +1113,34 @@ function handleFormInput(event) {
   }
 
   // ==========================================
-  // CURSOR-AWARE DATE INPUT MASK
+  // STRICT LEFT-TO-RIGHT DATE INPUT MASK
   // ==========================================
   if (target.id === "birthDate") {
-    // 1. Get current cursor position and raw digits
-    let cursorPos = target.selectionStart;
+    const originalCursorPos = target.selectionStart;
+    const originalValue = target.value;
     let rawDigits = target.value.replace(/\D/g, "");
     
-    // 2. Build the formatted string
+    if (rawDigits.length > 8) rawDigits = rawDigits.slice(0, 8);
+
     let formatted = "";
-    if (rawDigits.length > 0) {
-      formatted = rawDigits.slice(0, 2);
-    }
-    if (rawDigits.length > 2) {
-      formatted += "/" + rawDigits.slice(2, 4);
-    }
-    if (rawDigits.length > 4) {
-      formatted += "/" + rawDigits.slice(4, 8);
-    }
+    if (rawDigits.length > 0) formatted = rawDigits.slice(0, 2);
+    if (rawDigits.length > 2) formatted += "/" + rawDigits.slice(2, 4);
+    if (rawDigits.length > 4) formatted += "/" + rawDigits.slice(4, 8);
     
-    // 3. If the value changed, update it and calculate the new cursor position
-    if (target.value !== formatted) {
+    if (originalValue !== formatted) {
       target.value = formatted;
       
-      // Count how many numbers are before the cursor
-      let digitsBeforeCursor = target.value.slice(0, cursorPos).replace(/\D/g, "").length;
+      let newCursorPos = originalCursorPos;
       
-      // Find the new index where the cursor should sit (after the same number of digits)
-      let newCursorPos = 0;
-      let digitsFound = 0;
-      for (let i = 0; i < formatted.length; i++) {
-        if (/\d/.test(formatted[i])) {
-          digitsFound++;
-        }
-        if (digitsFound === digitsBeforeCursor) {
-          newCursorPos = i + 1;
-          break;
-        }
+      if (originalCursorPos === originalValue.length) {
+        newCursorPos = formatted.length;
+      } else {
+        const charsAdded = formatted.length - originalValue.length;
+        newCursorPos = originalCursorPos + charsAdded;
+        if (newCursorPos > formatted.length) newCursorPos = formatted.length;
+        if (newCursorPos < 0) newCursorPos = 0;
       }
-      
-      // Fallback if cursor is at the very end
-      if (digitsBeforeCursor === 0) newCursorPos = 0;
-      if (digitsBeforeCursor === rawDigits.length) newCursorPos = formatted.length;
 
-      // 4. Restore the cursor
       target.setSelectionRange(newCursorPos, newCursorPos);
     }
   }
@@ -1484,7 +1492,15 @@ function clearAndResetForm() {
   draftDecisionPending = false;
   [regionInput, provinceInput, cityInput].forEach((i) => delete i.dataset.resolved);
   localStorage.removeItem(STORAGE_KEY);
-  form.reset();
+  
+  // Manually clear inputs instead of form.reset() so the browser doesn't aggressively wipe autofilled data
+  form.querySelectorAll('input, select').forEach(field => {
+    if (field.type === 'checkbox' || field.type === 'radio') {
+      field.checked = false;
+    } else {
+      field.value = '';
+    }
+  });
   
   delete birthDateInput.dataset.prevLength;
 

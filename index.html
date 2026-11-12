@@ -631,7 +631,9 @@
       <h2 id="clearTitle">Start a new enrollment?</h2>
       <p>The information currently entered in this form will be cleared from this browser.</p>
       <div class="modal-actions">
+        <!-- FIXED: Added type="button" so it doesn't trigger a form submit/wipe -->
         <button type="button" class="btn btn-secondary" data-close-modal="clearModal">Cancel</button>
+        <!-- FIXED: Added type="button" to prevent default form behavior -->
         <button type="button" id="confirmClearBtn" class="btn btn-danger">Clear & Start Over</button>
       </div>
     </div>
