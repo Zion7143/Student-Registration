@@ -68,7 +68,7 @@ let calendarDate = new Date();
 
 // Global variable to store the fetched address data
 let phAddressData = null;
-let draftDecisionPending = false; // true while the "continue enrollment?" prompt is unanswered
+let draftDecisionPending = false; 
 
 /* =========================================
    REGION DISPLAY NAMES MAPPING
@@ -1089,11 +1089,14 @@ function handleFormInput(event) {
   }
 
   // ==========================================
-  // NORMAL, SMOOTH DATE INPUT MASK
+  // CURSOR-AWARE DATE INPUT MASK
   // ==========================================
   if (target.id === "birthDate") {
+    // 1. Get current cursor position and raw digits
+    let cursorPos = target.selectionStart;
     let rawDigits = target.value.replace(/\D/g, "");
     
+    // 2. Build the formatted string
     let formatted = "";
     if (rawDigits.length > 0) {
       formatted = rawDigits.slice(0, 2);
@@ -1105,16 +1108,33 @@ function handleFormInput(event) {
       formatted += "/" + rawDigits.slice(4, 8);
     }
     
+    // 3. If the value changed, update it and calculate the new cursor position
     if (target.value !== formatted) {
       target.value = formatted;
       
-      const isDeleting = target.dataset.prevLength && target.value.length < Number(target.dataset.prevLength);
-      if (!isDeleting) {
-        target.setSelectionRange(formatted.length, formatted.length);
+      // Count how many numbers are before the cursor
+      let digitsBeforeCursor = target.value.slice(0, cursorPos).replace(/\D/g, "").length;
+      
+      // Find the new index where the cursor should sit (after the same number of digits)
+      let newCursorPos = 0;
+      let digitsFound = 0;
+      for (let i = 0; i < formatted.length; i++) {
+        if (/\d/.test(formatted[i])) {
+          digitsFound++;
+        }
+        if (digitsFound === digitsBeforeCursor) {
+          newCursorPos = i + 1;
+          break;
+        }
       }
+      
+      // Fallback if cursor is at the very end
+      if (digitsBeforeCursor === 0) newCursorPos = 0;
+      if (digitsBeforeCursor === rawDigits.length) newCursorPos = formatted.length;
+
+      // 4. Restore the cursor
+      target.setSelectionRange(newCursorPos, newCursorPos);
     }
-    
-    target.dataset.prevLength = target.value.length;
   }
 
   // Clean spaces from Student ID input as user types
